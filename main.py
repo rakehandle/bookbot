@@ -3,8 +3,7 @@ def main():
     book = get_text(book_path)
     wordCount = word_count(book)
     charCount = char_count(book)
-    report = create_Report(book_path, wordCount,charCount)
-    print(report)
+    print(create_Report(book_path, wordCount, charCount))
 
 def get_text(book):
     with open(book) as f:
@@ -17,20 +16,33 @@ def char_count(text):
     characters = {}
     for c in text:
         lowercase = c.lower()
-        if lowercase in characters:
+        if c.isalpha() == False:
+            continue
+        elif lowercase in characters:
             characters[lowercase]+= 1
         else:
             characters[lowercase]=1
-    return characters
+    sorted = sort_Chars(characters)
+    return sorted
 
-def create_Report(book, words, characters):
-    report = f"--- Begin report of {book} ---\n{words} words found in {book}\n"
-    for c in characters:
-        if c != "'":
-            report += f"The '{c}' character was found {characters[c]} times\n"
-        else:
-            print("if statement works")
-            report += f"The \' character was found {characters[c]} times\n"
+def sort_Chars(counts):
+    char_List = []
+    for c in counts:
+        new_Dict={}
+        new_Dict["name"]=c
+        new_Dict["count"]= counts[c]
+        char_List.append(new_Dict)
+    char_List.sort(reverse=True, key=sort_on)
+    return char_List
+
+def sort_on(dict):
+    return dict["count"]
+
+def create_Report(text, words, chars):
+    report = (f"--- Begin report of {text} ---\n {words} words found in the document\n\n")
+    for i in chars:
+        report += f"The '{i["name"]}' character was found {i["count"]} times\n"
+    report += "--- End Report ---"
     return report
 
 main()
